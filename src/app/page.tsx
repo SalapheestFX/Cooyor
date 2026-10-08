@@ -678,10 +678,14 @@ export default function Home() {
 
             <div className="flex items-start gap-3">
 
-              <div className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-xl bg-slate-950 text-[11px] font-bold text-white shadow-sm">
-                C
-              </div>
-
+<div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-white/80 bg-white/70 shadow-sm">
+  <img
+    src="/cooyor-logo.jpg"
+    alt="Cooyor"
+    className="h-full w-full object-cover"
+  />
+</div>
+              
               <div>
                 <span className="font-bold text-slate-950">
                   Cooyor
@@ -1347,7 +1351,7 @@ function ActionButton({
     <button
       onClick={onClick}
       disabled={disabled}
-      className="w-full rounded-[18px] border border-slate-950 bg-slate-950 px-4 py-3.5 text-sm font-bold text-white shadow-lg shadow-slate-950/10 transition hover:-translate-y-0.5 hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-40"
+      className="mb-2 flex min-h-[40px] w-full items-center justify-center rounded-xl border border-slate-900 bg-slate-950 px-4 py-2.5 text-[11px] font-bold leading-5 text-white shadow-sm transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-40"
     >
       {disabled ? "Processing..." : children}
     </button>
