@@ -512,7 +512,7 @@ export default function Home() {
       );
 
       setMessage(
-        "Live Airwallex status refreshed."
+        "Live payment status refreshed."
       );
     } catch (err) {
       setError(
@@ -534,13 +534,27 @@ export default function Home() {
   }
 
   return (
-    <main className="min-h-screen bg-[#f6f8fb] text-slate-950">
-      <div className="mx-auto max-w-6xl px-4 py-5 sm:px-6 lg:px-8">
+    <main className="relative min-h-screen overflow-hidden bg-[#edf4f8] text-slate-950">
+
+      {/* AMBIENT GLASS BACKGROUND */}
+      <div className="pointer-events-none absolute inset-0 overflow-hidden">
+        <div className="absolute -left-32 -top-32 h-96 w-96 rounded-full bg-sky-300/25 blur-3xl" />
+
+        <div className="absolute -right-40 top-20 h-[28rem] w-[28rem] rounded-full bg-blue-300/20 blur-3xl" />
+
+        <div className="absolute bottom-0 left-1/3 h-80 w-80 rounded-full bg-indigo-300/15 blur-3xl" />
+
+        <div className="absolute left-1/2 top-1/2 h-96 w-96 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white/40 blur-3xl" />
+      </div>
+
+      <div className="relative mx-auto max-w-6xl px-4 py-5 sm:px-6 lg:px-8">
 
         {/* HEADER */}
-        <header className="mb-8 flex items-center justify-between">
+        <header className="mb-6 flex items-center justify-between rounded-[26px] border border-white/70 bg-white/55 px-4 py-3 shadow-[0_10px_40px_rgba(15,23,42,0.07)] backdrop-blur-2xl sm:px-5">
+
           <div className="flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center overflow-hidden rounded-xl bg-white shadow-sm ring-1 ring-slate-200">
+
+            <div className="flex h-11 w-11 items-center justify-center overflow-hidden rounded-2xl border border-white/80 bg-white/70 shadow-sm">
               <img
                 src="/cooyor-logo.jpg"
                 alt="Cooyor"
@@ -549,7 +563,7 @@ export default function Home() {
             </div>
 
             <div>
-              <div className="text-xl font-bold tracking-tight">
+              <div className="text-xl font-bold tracking-tight text-slate-950">
                 Cooyor
               </div>
 
@@ -557,109 +571,188 @@ export default function Home() {
                 Payment Operations
               </div>
             </div>
+
           </div>
 
-          <div className="flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-600 shadow-sm">
-            <span className="h-2 w-2 rounded-full bg-emerald-500" />
-            Operations online
+          <div className="hidden items-center gap-2 text-xs font-semibold text-slate-500 sm:flex">
+            <span className="h-2 w-2 rounded-full bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.55)]" />
+            Autonomous operations
           </div>
+
         </header>
 
         {/* HERO */}
-        <section className="mb-6 rounded-3xl bg-slate-950 p-6 text-white shadow-xl sm:p-8">
-          <div className="max-w-3xl">
-            <div className="mb-3 text-xs font-bold uppercase tracking-[0.18em] text-sky-300">
+        <section className="relative mb-6 overflow-hidden rounded-[30px] border border-white/20 bg-slate-950/90 p-6 text-white shadow-[0_25px_70px_rgba(15,23,42,0.18)] backdrop-blur-2xl sm:p-9">
+
+          <div className="pointer-events-none absolute -right-20 -top-28 h-72 w-72 rounded-full bg-sky-400/20 blur-3xl" />
+
+          <div className="pointer-events-none absolute -bottom-32 left-1/3 h-72 w-72 rounded-full bg-blue-500/10 blur-3xl" />
+
+          <div className="relative max-w-4xl">
+
+            <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/10 px-3 py-1.5 text-[11px] font-bold uppercase tracking-[0.18em] text-sky-200 backdrop-blur-xl">
+              <span className="h-1.5 w-1.5 rounded-full bg-sky-300" />
               Autonomous Payment Operations
             </div>
 
-            <h1 className="text-3xl font-bold tracking-tight sm:text-5xl">
-              Detect. Decide. Resolve.
+            <h1 className="max-w-3xl text-3xl font-bold tracking-tight sm:text-5xl">
+              Detect.
+              <span className="text-sky-300">
+                {" "}Decide.
+              </span>
+              {" "}Resolve.
             </h1>
 
             <p className="mt-4 max-w-2xl text-sm leading-6 text-slate-300 sm:text-base">
               Cooyor monitors supplier payments, analyzes
-              payment failures, protects against duplicate
-              transfers, and executes the safest resolution.
+              payment failures, prevents duplicate transfers,
+              and executes the safest resolution automatically.
             </p>
 
-            <div className="mt-6 flex flex-wrap gap-3">
+            {/* FLOW */}
+            <div className="mt-7 flex flex-wrap items-center gap-2 text-xs font-semibold">
+
+              <FlowStep
+                number="01"
+                label="Detect"
+                active={
+                  incident === null ||
+                  incident.stage === "CREATED" ||
+                  incident.stage === "SENT"
+                }
+              />
+
+              <div className="hidden h-px w-8 bg-white/20 sm:block" />
+
+              <FlowStep
+                number="02"
+                label="Decide"
+                active={
+                  incident?.stage === "DECIDING" ||
+                  incident?.stage === "REPLACING"
+                }
+              />
+
+              <div className="hidden h-px w-8 bg-white/20 sm:block" />
+
+              <FlowStep
+                number="03"
+                label="Resolve"
+                active={
+                  incident?.stage === "REPLACEMENT_SENT" ||
+                  incident?.stage === "RESOLVED"
+                }
+              />
+
+            </div>
+
+            <div className="mt-7 flex flex-wrap gap-3">
+
               <button
                 onClick={sendPayment}
                 disabled={!canSend}
-                className="rounded-xl bg-white px-5 py-3 text-sm font-bold text-slate-950 transition hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-40"
+                className="rounded-2xl bg-white px-5 py-3.5 text-sm font-bold text-slate-950 shadow-lg transition hover:-translate-y-0.5 hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-40"
               >
-                Send supplier payment
+                Start supplier payment
               </button>
 
               {incident !== null && (
                 <button
                   onClick={refresh}
                   disabled={busy}
-                  className="rounded-xl border border-white/20 px-5 py-3 text-sm font-semibold text-white transition hover:bg-white/10 disabled:opacity-40"
+                  className="rounded-2xl border border-white/15 bg-white/5 px-5 py-3.5 text-sm font-semibold text-white backdrop-blur-xl transition hover:bg-white/10 disabled:opacity-40"
                 >
-                  Refresh live status
+                  Refresh status
                 </button>
               )}
+
             </div>
+
           </div>
         </section>
 
-        {/* MESSAGE */}
+        {/* COOYOR STATUS MESSAGE */}
         <div className="mb-6">
-          <div className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-600 shadow-sm">
-            <span className="font-semibold text-slate-900">
-              Cooyor:
-            </span>{" "}
-            {message}
+
+          <div className="rounded-[22px] border border-white/70 bg-white/55 px-4 py-3.5 text-sm text-slate-600 shadow-[0_8px_30px_rgba(15,23,42,0.05)] backdrop-blur-2xl">
+
+            <div className="flex items-start gap-3">
+
+              <div className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-xl bg-slate-950 text-[11px] font-bold text-white shadow-sm">
+                C
+              </div>
+
+              <div>
+                <span className="font-bold text-slate-950">
+                  Cooyor
+                </span>{" "}
+                {message}
+              </div>
+
+            </div>
+
           </div>
 
           {error && (
-            <div className="mt-3 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
+            <div className="mt-3 rounded-[22px] border border-red-200/70 bg-red-50/70 px-4 py-3.5 text-sm font-medium text-red-700 shadow-sm backdrop-blur-xl">
               {error}
             </div>
           )}
+
         </div>
 
         {/* MAIN GRID */}
         <div className="grid gap-6 lg:grid-cols-[1.05fr_.95fr]">
 
           {/* PAYMENT MONITOR */}
-          <section className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+          <section className="rounded-[28px] border border-white/70 bg-white/55 p-5 shadow-[0_15px_50px_rgba(15,23,42,0.07)] backdrop-blur-2xl sm:p-6">
+
             <div className="mb-5 flex items-center justify-between">
+
               <div>
-                <p className="text-xs font-bold uppercase tracking-wider text-slate-400">
+                <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-slate-400">
                   Payment monitor
                 </p>
 
-                <h2 className="mt-1 text-xl font-bold">
+                <h2 className="mt-1 text-xl font-bold tracking-tight">
                   Supplier payment
                 </h2>
               </div>
 
-              <div className="rounded-full bg-slate-100 px-3 py-1.5 text-xs font-bold text-slate-600">
+              <div className="rounded-full border border-white/80 bg-white/60 px-3 py-1.5 text-xs font-bold text-slate-600 shadow-sm backdrop-blur-xl">
                 {currentStatus}
               </div>
+
             </div>
 
             {incident === null ? (
-              <div className="rounded-2xl border border-dashed border-slate-300 p-8 text-center">
-                <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-100 text-xl">
+
+              <div className="rounded-[24px] border border-dashed border-slate-300/70 bg-white/25 p-9 text-center backdrop-blur-xl">
+
+                <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl border border-white/80 bg-white/60 text-xl font-bold text-slate-700 shadow-sm">
                   $
                 </div>
 
-                <p className="font-semibold">
+                <p className="font-bold">
                   No active payment
                 </p>
 
-                <p className="mt-1 text-sm text-slate-500">
+                <p className="mx-auto mt-2 max-w-xs text-sm leading-5 text-slate-500">
                   Start a supplier payment to activate
                   Cooyor monitoring.
                 </p>
+
               </div>
+
             ) : (
+
               <div>
-                <div className="rounded-2xl bg-slate-50 p-5">
+
+                {/* PAYMENT SUMMARY */}
+                <div className="rounded-[24px] border border-white/70 bg-white/45 p-5 shadow-inner backdrop-blur-xl">
+
                   <div className="flex items-end justify-between gap-4">
+
                     <div>
                       <p className="text-sm text-slate-500">
                         Supplier
@@ -671,17 +764,21 @@ export default function Home() {
                     </div>
 
                     <div className="text-right">
+
                       <p className="text-3xl font-bold tracking-tight">
                         ${incident.amount.toFixed(2)}
                       </p>
 
-                      <p className="text-xs font-semibold text-slate-400">
+                      <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
                         {incident.currency}
                       </p>
+
                     </div>
+
                   </div>
 
                   <div className="mt-5 grid gap-3 sm:grid-cols-2">
+
                     <Info
                       label="Incident"
                       value={incident.incident_id}
@@ -693,15 +790,28 @@ export default function Home() {
                         incident.original_transfer_id
                       }
                     />
+
                   </div>
+
                 </div>
 
-                <div className="mt-5">
-                  <p className="mb-2 text-xs font-bold uppercase tracking-wider text-slate-400">
-                    Payment state
-                  </p>
+                {/* PAYMENT STATE */}
+                <div className="mt-6">
+
+                  <div className="mb-3 flex items-center justify-between">
+
+                    <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-slate-400">
+                      Payment state
+                    </p>
+
+                    <span className="text-[11px] font-semibold text-slate-400">
+                      Live workflow
+                    </span>
+
+                  </div>
 
                   <div className="flex flex-wrap gap-2">
+
                     {(
                       [
                         "CREATED",
@@ -712,32 +822,46 @@ export default function Home() {
                         "RESOLVED",
                       ] as Stage[]
                     ).map((stage) => {
+
                       const active =
                         incident.stage === stage;
 
                       return (
                         <div
                           key={stage}
-                          className={`rounded-full px-3 py-1.5 text-xs font-bold ${
+                          className={`rounded-full border px-3 py-1.5 text-xs font-bold transition ${
                             active
-                              ? "bg-slate-950 text-white"
-                              : "bg-slate-100 text-slate-400"
+                              ? "border-slate-950 bg-slate-950 text-white shadow-sm"
+                              : "border-white/70 bg-white/45 text-slate-400"
                           }`}
                         >
                           {statusLabel(stage)}
                         </div>
                       );
                     })}
+
                   </div>
+
                 </div>
 
+                {/* FAILURE EVIDENCE */}
                 {incident.failure_reason !== null && (
-                  <div className="mt-5 rounded-2xl border border-amber-200 bg-amber-50 p-4">
-                    <p className="text-xs font-bold uppercase tracking-wider text-amber-700">
-                      Failure evidence
-                    </p>
 
-                    <p className="mt-2 text-sm font-semibold text-amber-950">
+                  <div className="mt-6 rounded-[22px] border border-amber-200/70 bg-amber-50/65 p-4 backdrop-blur-xl">
+
+                    <div className="flex items-center gap-2">
+
+                      <span className="flex h-7 w-7 items-center justify-center rounded-xl bg-amber-100 text-xs font-bold text-amber-700">
+                        !
+                      </span>
+
+                      <p className="text-[11px] font-bold uppercase tracking-[0.15em] text-amber-700">
+                        Failure evidence
+                      </p>
+
+                    </div>
+
+                    <p className="mt-3 text-sm font-semibold text-amber-950">
                       {incident.failure_reason}
                     </p>
 
@@ -747,31 +871,43 @@ export default function Home() {
                         {incident.failure_type}
                       </p>
                     )}
+
                   </div>
+
                 )}
+
               </div>
+
             )}
+
           </section>
 
           {/* INCIDENT COMMANDER */}
-          <section className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+          <section className="rounded-[28px] border border-white/70 bg-white/55 p-5 shadow-[0_15px_50px_rgba(15,23,42,0.07)] backdrop-blur-2xl sm:p-6">
+
             <div className="mb-5">
-              <p className="text-xs font-bold uppercase tracking-wider text-slate-400">
+
+              <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-slate-400">
                 Incident commander
               </p>
 
-              <h2 className="mt-1 text-xl font-bold">
+              <h2 className="mt-1 text-xl font-bold tracking-tight">
                 Cooyor decision engine
               </h2>
+
             </div>
 
             {incident === null ? (
-              <div className="rounded-2xl bg-slate-50 p-6 text-sm leading-6 text-slate-500">
+
+              <div className="rounded-[24px] border border-white/70 bg-white/35 p-6 text-sm leading-6 text-slate-500 backdrop-blur-xl">
                 Cooyor will analyze payment evidence
                 when an incident occurs.
               </div>
+
             ) : (
+
               <div className="space-y-3">
+
                 <DecisionRow
                   label="Initial plan"
                   value={
@@ -797,12 +933,23 @@ export default function Home() {
                   strong
                 />
 
-                <div className="mt-4 rounded-2xl border border-slate-200 p-4">
-                  <p className="text-xs font-bold uppercase tracking-wider text-slate-400">
-                    Safety gate
-                  </p>
+                {/* SAFETY GATE */}
+                <div className="mt-5 rounded-[24px] border border-white/80 bg-white/35 p-4 backdrop-blur-xl">
 
-                  <div className="mt-3 space-y-2 text-sm">
+                  <div className="flex items-center justify-between">
+
+                    <p className="text-[11px] font-bold uppercase tracking-[0.15em] text-slate-400">
+                      Safety gate
+                    </p>
+
+                    <span className="rounded-full bg-slate-100/80 px-2.5 py-1 text-[10px] font-bold text-slate-500">
+                      Protected
+                    </span>
+
+                  </div>
+
+                  <div className="mt-4 space-y-3">
+
                     <Gate
                       label="Original payment is final"
                       passed={
@@ -834,10 +981,14 @@ export default function Home() {
                       label="Replacement paid"
                       passed={incident.resolved}
                     />
+
                   </div>
+
                 </div>
 
-                <div className="pt-2">
+                {/* ACTIONS */}
+                <div className="pt-3">
+
                   {canSendToBank && (
                     <ActionButton
                       onClick={() =>
@@ -918,110 +1069,182 @@ export default function Home() {
                   )}
 
                   {incident.resolved && (
-                    <div className="rounded-2xl bg-emerald-50 p-4 text-center">
-                      <div className="text-sm font-bold text-emerald-700">
+
+                    <div className="rounded-[22px] border border-emerald-200/70 bg-emerald-50/65 p-4 text-center backdrop-blur-xl">
+
+                      <div className="mx-auto flex h-9 w-9 items-center justify-center rounded-full bg-emerald-100 text-sm font-bold text-emerald-700">
+                        ✓
+                      </div>
+
+                      <div className="mt-2 text-sm font-bold text-emerald-700">
                         Incident resolved
                       </div>
 
-                      <div className="mt-1 text-xs text-emerald-600">
+                      <div className="mt-1 text-xs leading-5 text-emerald-600">
                         Original payment preserved as
                         CANCELLED. Replacement verified
                         as PAID.
                       </div>
+
                     </div>
+
                   )}
+
                 </div>
+
               </div>
+
             )}
+
           </section>
+
         </div>
 
         {/* AGENT ACTIVITY */}
-        <section className="mt-6 rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+        <section className="mt-6 rounded-[28px] border border-white/70 bg-white/55 p-5 shadow-[0_15px_50px_rgba(15,23,42,0.07)] backdrop-blur-2xl sm:p-6">
+
           <div className="mb-6 flex items-center justify-between">
+
             <div>
-              <p className="text-xs font-bold uppercase tracking-wider text-slate-400">
+              <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-slate-400">
                 Agent activity
               </p>
 
-              <h2 className="mt-1 text-xl font-bold">
+              <h2 className="mt-1 text-xl font-bold tracking-tight">
                 Decision timeline
               </h2>
             </div>
 
             {incident !== null && (
-              <span className="text-xs font-semibold text-slate-400">
+              <span className="rounded-full border border-white/70 bg-white/50 px-3 py-1.5 text-[11px] font-semibold text-slate-400 backdrop-blur-xl">
                 {incident.events.length} events
               </span>
             )}
+
           </div>
 
           {incident === null ||
           incident.events.length === 0 ? (
-            <div className="rounded-2xl bg-slate-50 p-8 text-center text-sm text-slate-500">
+
+            <div className="rounded-[24px] border border-white/70 bg-white/30 p-8 text-center text-sm text-slate-500 backdrop-blur-xl">
               Activity will appear here as Cooyor
               operates the payment.
             </div>
+
           ) : (
+
             <div className="relative">
-              <div className="absolute bottom-2 left-[11px] top-2 w-px bg-slate-200" />
+
+              <div className="absolute bottom-2 left-[11px] top-2 w-px bg-slate-200/80" />
 
               <div className="space-y-5">
+
                 {incident.events.map((event) => (
+
                   <div
                     key={event.id}
                     className="relative flex gap-4"
                   >
-                    <div className="relative z-10 mt-1 h-[23px] w-[23px] shrink-0 rounded-full border-4 border-white bg-slate-900 shadow-sm" />
 
-                    <div className="min-w-0 flex-1">
+                    <div className="relative z-10 mt-1 flex h-[23px] w-[23px] shrink-0 items-center justify-center rounded-full border-4 border-white/80 bg-slate-950 shadow-sm">
+                      <span className="h-1.5 w-1.5 rounded-full bg-white" />
+                    </div>
+
+                    <div className="min-w-0 flex-1 rounded-[20px] border border-white/60 bg-white/30 px-4 py-3 backdrop-blur-xl">
+
                       <div className="flex flex-wrap items-center justify-between gap-2">
+
                         <p className="text-sm font-bold">
                           {formatEventType(event.type)}
                         </p>
 
-                        <time className="text-xs font-medium text-slate-400">
+                        <time className="text-[11px] font-medium text-slate-400">
                           {formatTime(
                             event.created_at
                           )}
                         </time>
+
                       </div>
 
                       <p className="mt-1 text-sm leading-5 text-slate-500">
                         {event.message}
                       </p>
+
                     </div>
+
                   </div>
+
                 ))}
+
               </div>
+
             </div>
+
           )}
+
         </section>
 
         {/* FOOTER */}
-        <footer className="mt-6 flex flex-col gap-2 border-t border-slate-200 pt-5 text-xs text-slate-400 sm:flex-row sm:items-center sm:justify-between">
-          <span>
+        <footer className="mt-6 flex flex-col gap-3 border-t border-white/60 pt-5 text-xs text-slate-400 sm:flex-row sm:items-center sm:justify-between">
+
+          <span className="font-medium">
             Cooyor — Autonomous Payment Operations Agent
           </span>
 
-          <span>
-            Powered by Airwallex Sandbox
+          <span className="text-slate-400">
+            Detect. Decide. Resolve.
           </span>
+
         </footer>
 
         {incident !== null && (
+
           <div className="mt-4 flex justify-end">
+
             <button
               onClick={resetDemo}
               disabled={busy}
-              className="text-xs font-semibold text-slate-400 underline-offset-4 hover:text-slate-700 hover:underline disabled:opacity-40"
+              className="rounded-full border border-white/70 bg-white/40 px-4 py-2 text-xs font-semibold text-slate-400 shadow-sm backdrop-blur-xl transition hover:bg-white/70 hover:text-slate-700 disabled:opacity-40"
             >
               Start a new demo
             </button>
+
           </div>
+
         )}
+
       </div>
     </main>
+  );
+}
+
+/* ----------------------------- */
+/* UI COMPONENTS */
+/* ----------------------------- */
+
+function FlowStep({
+  number,
+  label,
+  active,
+}: {
+  number: string;
+  label: string;
+  active: boolean;
+}) {
+  return (
+    <div
+      className={`flex items-center gap-2 rounded-full border px-3 py-1.5 backdrop-blur-xl ${
+        active
+          ? "border-white/20 bg-white/10 text-white"
+          : "border-white/10 bg-white/5 text-slate-500"
+      }`}
+    >
+      <span className="text-[10px] opacity-60">
+        {number}
+      </span>
+
+      <span>{label}</span>
+    </div>
   );
 }
 
@@ -1033,14 +1256,16 @@ function Info({
   value: string;
 }) {
   return (
-    <div>
-      <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
+    <div className="rounded-xl border border-white/50 bg-white/25 p-3">
+
+      <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
         {label}
       </p>
 
       <p className="mt-1 truncate text-xs font-semibold text-slate-700">
         {value}
       </p>
+
     </div>
   );
 }
@@ -1055,13 +1280,14 @@ function DecisionRow({
   strong?: boolean;
 }) {
   return (
-    <div className="flex items-center justify-between gap-4 rounded-2xl bg-slate-50 px-4 py-3">
+    <div className="flex items-center justify-between gap-4 rounded-[18px] border border-white/60 bg-white/35 px-4 py-3 backdrop-blur-xl">
+
       <span className="text-sm text-slate-500">
         {label}
       </span>
 
       <span
-        className={`text-right text-sm ${
+        className={`max-w-[58%] truncate text-right text-sm ${
           strong
             ? "font-bold text-slate-950"
             : "font-semibold text-slate-700"
@@ -1069,6 +1295,7 @@ function DecisionRow({
       >
         {value}
       </span>
+
     </div>
   );
 }
@@ -1081,12 +1308,13 @@ function Gate({
   passed: boolean;
 }) {
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex items-center gap-3">
+
       <span
-        className={`flex h-5 w-5 items-center justify-center rounded-full text-[10px] font-bold ${
+        className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[10px] font-bold ${
           passed
             ? "bg-emerald-100 text-emerald-700"
-            : "bg-slate-100 text-slate-400"
+            : "bg-slate-100/80 text-slate-400"
         }`}
       >
         {passed ? "✓" : "•"}
@@ -1095,12 +1323,13 @@ function Gate({
       <span
         className={
           passed
-            ? "font-medium text-slate-700"
-            : "text-slate-400"
+            ? "text-sm font-medium text-slate-700"
+            : "text-sm text-slate-400"
         }
       >
         {label}
       </span>
+
     </div>
   );
 }
@@ -1118,7 +1347,7 @@ function ActionButton({
     <button
       onClick={onClick}
       disabled={disabled}
-      className="w-full rounded-2xl bg-slate-950 px-4 py-3.5 text-sm font-bold text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-40"
+      className="w-full rounded-[18px] border border-slate-950 bg-slate-950 px-4 py-3.5 text-sm font-bold text-white shadow-lg shadow-slate-950/10 transition hover:-translate-y-0.5 hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-40"
     >
       {disabled ? "Processing..." : children}
     </button>
