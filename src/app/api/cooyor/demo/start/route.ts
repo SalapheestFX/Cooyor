@@ -1,5 +1,8 @@
 import { NextResponse } from "next/server";
-import { getAirwallexToken, AIRWALLEX_API_URL } from "@/lib/airwallex";
+import {
+  getAirwallexToken,
+  AIRWALLEX_API_URL,
+} from "@/lib/airwallex";
 import {
   createIncidentSession,
   addIncidentEvent,
@@ -44,13 +47,78 @@ export async function POST() {
       }
     );
 
-    const data = await response.json();
+    /*
+     * Read the response as text first.
+     *
+     * This prevents the route from crashing if Airwallex
+     * or an upstream service unexpectedly returns HTML.
+     */
+    const contentType =
+      response.headers.get("content-type") || "";
 
-    if (!response.ok) {
+    const rawResponse = await response.text();
+
+    let data: any;
+
+    try {
+      if (contentType.includes("application/json")) {
+        data = JSON.parse(rawResponse);
+      } else {
+        data = {
+          raw_response: rawResponse,
+        };
+      }
+    } catch {
+      data = {
+        raw_response: rawResponse,
+      };
+    }
+
+    /*
+     * If Airwallex returned a non-JSON response,
+     * expose the useful diagnostic information instead
+     * of throwing "Unexpected token '<'".
+     */
+    if (!contentType.includes("application/json")) {
+      console.error(
+        "AIRWALLEX NON-JSON RESPONSE:",
+        {
+          status: response.status,
+          content_type: contentType,
+          response: rawResponse.slice(0, 2000),
+        }
+      );
+
       return NextResponse.json(
         {
           success: false,
-          error: "Airwallex transfer creation failed.",
+          error:
+            "Airwallex returned a non-JSON response.",
+          airwallex_status: response.status,
+          content_type: contentType,
+          details: {
+            raw_response: rawResponse.slice(0, 2000),
+          },
+        },
+        { status: 502 }
+      );
+    }
+
+    if (!response.ok) {
+      console.error(
+        "AIRWALLEX TRANSFER CREATION FAILED:",
+        {
+          status: response.status,
+          response: data,
+        }
+      );
+
+      return NextResponse.json(
+        {
+          success: false,
+          error:
+            "Airwallex transfer creation failed.",
+          airwallex_status: response.status,
           details: data,
         },
         { status: response.status }
@@ -60,16 +128,26 @@ export async function POST() {
     const transferId = data.id;
 
     if (!transferId) {
+      console.error(
+        "AIRWALLEX DID NOT RETURN TRANSFER ID:",
+        data
+      );
+
       return NextResponse.json(
         {
           success: false,
-          error: "Airwallex did not return a transfer ID.",
+          error:
+            "Airwallex did not return a transfer ID.",
           details: data,
         },
         { status: 502 }
       );
     }
 
+    /*
+     * Create Cooyor's incident session only after
+     * Airwallex successfully creates the payment.
+     */
     const session = createIncidentSession({
       original_transfer_id: transferId,
       original_reference: reference,
@@ -111,7 +189,10 @@ export async function POST() {
       },
     });
   } catch (error) {
-    console.error("Cooyor start payment error:", error);
+    console.error(
+      "Cooyor start payment error:",
+      error
+    );
 
     return NextResponse.json(
       {
